@@ -148,7 +148,7 @@ class AYHMessageManage: NSObject
                     break;
                 }
             }
-            index--;
+            index -= 1;
         }
     }
     

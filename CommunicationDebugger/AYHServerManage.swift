@@ -96,13 +96,13 @@ class AYHServerManage: NSObject
         func sendedToUDPClient(data:NSData)
         {
             self.udpSocket?.sendData(data, toAddress: self.udpRemoteAddress!, withTimeout: 5, tag: self.sendTag);
-            self.sendTag++;
+            self.sendTag += 1;
         }
         
         func sendedToTCPClient(data:NSData)
         {
             self.tcpClientsManage?.tcpClientSocket?.socket?.writeData(data, withTimeout: 5, tag: self.sendTag);
-            self.sendTag++;
+            self.sendTag += 1;
         }
         
         defer

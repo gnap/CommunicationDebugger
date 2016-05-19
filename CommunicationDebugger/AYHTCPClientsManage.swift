@@ -76,7 +76,7 @@ class AYHTCPClientsManage: NSObject
                 self.tcpClients.removeAtIndex(index);
                 break;
             }
-            index--;
+            index -= 1;
         }
     }
     

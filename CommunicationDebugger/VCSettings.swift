@@ -78,7 +78,7 @@ class VCSettings: VCAYHBase
         {
             self.swSaveLogs = UISwitch(frame: CGRectMake(self.view.frame.size.width - 55.0, 6.0, 30.0, 30.0));
             self.swSaveLogs?.on = AYHParams.sharedInstance.isSaveLogs;
-            self.swSaveLogs?.addTarget(self, action: Selector("switchValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            self.swSaveLogs?.addTarget(self, action: #selector(VCSettings.switchValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             return;
         }
     }

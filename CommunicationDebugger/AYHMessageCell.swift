@@ -57,7 +57,7 @@ class AYHMessageCell: UITableViewCell
     }
     
     override func canPerformAction(action: Selector, withSender sender: AnyObject?) -> Bool {
-        if (action == Selector("deleteMenuItemClicked") || action == Selector("copyMenuItemClicked"))
+        if (action == #selector(AYHMessageCell.deleteMenuItemClicked) || action == #selector(AYHMessageCell.copyMenuItemClicked))
         {
             return true;
         }
@@ -81,8 +81,8 @@ class AYHMessageCell: UITableViewCell
     internal func handlerTapPressGestureRecognizer(sender:UITapGestureRecognizer)
     {
         self.becomeFirstResponder();
-        let deleteMenuItem:UIMenuItem = UIMenuItem(title: NSLocalizedString("Delete", comment: ""), action: Selector("deleteMenuItemClicked"));
-        let copyMenuItem:UIMenuItem = UIMenuItem(title: NSLocalizedString("Copy", comment: ""), action: Selector("copyMenuItemClicked"));
+        let deleteMenuItem:UIMenuItem = UIMenuItem(title: NSLocalizedString("Delete", comment: ""), action: #selector(AYHMessageCell.deleteMenuItemClicked));
+        let copyMenuItem:UIMenuItem = UIMenuItem(title: NSLocalizedString("Copy", comment: ""), action: #selector(AYHMessageCell.copyMenuItemClicked));
         let menuController:UIMenuController = UIMenuController.sharedMenuController();
         menuController.menuItems = [deleteMenuItem, copyMenuItem];
         menuController.setTargetRect(self.messageContentView!.frame, inView: self);
@@ -101,7 +101,7 @@ class AYHMessageCell: UITableViewCell
         self.addSubview(self.messageIconView!);
         self.addSubview(self.messageContentView!);
         
-        let tapGestureRecognizer:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: Selector("handlerTapPressGestureRecognizer:"));
+        let tapGestureRecognizer:UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AYHMessageCell.handlerTapPressGestureRecognizer(_:)));
         self.messageContentView?.addGestureRecognizer(tapGestureRecognizer);
     }
 }

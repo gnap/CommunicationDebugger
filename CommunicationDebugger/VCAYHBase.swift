@@ -24,7 +24,7 @@ class VCAYHBase: UIViewController
         self.edgesForExtendedLayout = UIRectEdge.None;
         
         SSASwiftReachability.sharedManager?.startMonitoring();
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("reachabilityStatusChanged:"), name: SSAReachabilityDidChangeNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCAYHBase.reachabilityStatusChanged(_:)), name: SSAReachabilityDidChangeNotification, object: nil);
     }
 
     override func viewDidAppear(animated: Bool) {

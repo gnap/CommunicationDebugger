@@ -185,28 +185,28 @@ class AYHelper: NSObject
     {
         var retVal:PhoneSizeType = .kPSTUnkown;
         let currentModeSize:CGSize = UIScreen.mainScreen().currentMode!.size;
-        var isSame:Bool = UIScreen.instancesRespondToSelector("currentMode") ? CGSizeEqualToSize(CGSizeMake(1242, 2208), currentModeSize) : false;
+        var isSame:Bool = UIScreen.instancesRespondToSelector(Selector("currentMode")) ? CGSizeEqualToSize(CGSizeMake(1242, 2208), currentModeSize) : false;
         if (isSame)
         {
             retVal = .kPST_5_5;
         }
         else
         {
-            isSame = UIScreen.instancesRespondToSelector("currentMode") ? CGSizeEqualToSize(CGSizeMake(750, 1334), currentModeSize) : false;
+            isSame = UIScreen.instancesRespondToSelector(Selector("currentMode")) ? CGSizeEqualToSize(CGSizeMake(750, 1334), currentModeSize) : false;
             if (isSame)
             {
                 retVal = .kPST_4_7;
             }
             else
             {
-                isSame = UIScreen.instancesRespondToSelector("currentMode") ? CGSizeEqualToSize(CGSizeMake(640, 1136), currentModeSize) : false;
+                isSame = UIScreen.instancesRespondToSelector(Selector("currentMode")) ? CGSizeEqualToSize(CGSizeMake(640, 1136), currentModeSize) : false;
                 if (isSame)
                 {
                     retVal = .kPST_4;
                 }
                 else
                 {
-                    isSame = UIScreen.instancesRespondToSelector("currentMode") ? CGSizeEqualToSize(CGSizeMake(640, 960), currentModeSize) : false;
+                    isSame = UIScreen.instancesRespondToSelector(Selector("currentMode")) ? CGSizeEqualToSize(CGSizeMake(640, 960), currentModeSize) : false;
                     if (isSame)
                     {
                         retVal = .kPST_3_5
@@ -227,7 +227,8 @@ class AYHelper: NSObject
         if getifaddrs(&ifaddr) == 0
         {
             // For each interface ...
-            for (var ptr = ifaddr; ptr != nil; ptr = ptr.memory.ifa_next)
+            var ptr = ifaddr
+            while (ptr != nil)
             {
                 let flags = Int32(ptr.memory.ifa_flags)
                 var addr = ptr.memory.ifa_addr.memory
@@ -248,6 +249,7 @@ class AYHelper: NSObject
                         }
                     }
                 }
+                ptr = ptr.memory.ifa_next
             }
             freeifaddrs(ifaddr);
         }
@@ -401,7 +403,7 @@ extension String
                     let lowChar:unichar = nStr.characterAtIndex(i + 1);
                     values[j] = AYHelper.charsToByte(highChar, lowChar: lowChar);
                     i += 2;
-                    j++;
+                    j += 1;
                 }
                 
                 retVal = NSData(bytes: values, length: length);

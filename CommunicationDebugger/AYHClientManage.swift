@@ -36,11 +36,14 @@ class AYHClientManage: NSObject
     private var tcpClientSocket:GCDAsyncSocket?;
     private var sendTag:Int = 0;
     private var sendedData:AYHSendedData?;
+    private var hbTimer: NSTimer?;
     
     // MARK: - life cycle
     override init()
     {
 		super.init();
+        
+        
         if (AYHCMParams.sharedInstance.socketType == .kCMSTUDP)
         {
             self.udpClientSocket = GCDAsyncUdpSocket(delegate: self, delegateQueue: dispatch_get_main_queue());
@@ -61,6 +64,11 @@ class AYHClientManage: NSObject
     {
         self.clientClosedThenNil();
         self.delegate = nil;
+        if let _ = self.hbTimer
+        {
+            self.hbTimer!.invalidate();
+            self.hbTimer = nil
+        }
     }
 
     // MARK: - public methods
@@ -74,6 +82,21 @@ class AYHClientManage: NSObject
         {
             self.tcpClientConnecting();
         }
+        if let _ = self.hbTimer
+        {
+            self.hbTimer!.invalidate()
+            self.hbTimer = nil;
+        }
+        self.hbTimer = NSTimer.scheduledTimerWithTimeInterval(6,
+                                                              target: self,
+                                                              selector: #selector(AYHClientManage.sendHeartBeat),
+                                                              userInfo: nil,
+                                                              repeats: true)
+    }
+    
+    func sendHeartBeat(timer: NSTimer)
+    {
+        clientSendData("GET / HTTP/1.1\nHost: api.zhihu.com\n\n")
     }
     
     func clientClosed()
@@ -86,6 +109,11 @@ class AYHClientManage: NSObject
         {
             self.tcpClientClosed();
         }
+        if let _ = self.hbTimer
+        {
+            self.hbTimer!.invalidate()
+            self.hbTimer = nil;
+        }
     }
     
     func clientSendData(sendData:String)
@@ -93,14 +121,14 @@ class AYHClientManage: NSObject
         func sendedToUdpServer(data:NSData)
         {
             self.udpClientSocket?.sendData(data, toHost: AYHCMParams.sharedInstance.remoteIP, port: UInt16(AYHCMParams.sharedInstance.remotePort), withTimeout: 5, tag: self.sendTag);
-            self.sendTag++;
+            self.sendTag += 1;
         }
         
         func sendedToTcpServer(data:NSData)
         {
             self.tcpClientSocket?.writeData(data, withTimeout: 5, tag: self.sendTag);
             self.tcpClientSocket?.readDataWithTimeout(-1, tag: self.sendTag);
-            self.sendTag++;
+            self.sendTag += 1;
         }
         
         defer
@@ -112,9 +140,9 @@ class AYHClientManage: NSObject
         }
         
         self.sendedData = AYHSendedData();
-        self.sendedData?.sendedMsg = sendData;
+        self.sendedData?.sendedMsg = sendData //.stringByReplacingOccurrencesOfString("\n", withString: "\r\n");
         self.sendedData?.sendedTag = self.sendTag;
-        let streamData:NSData? = sendData.toNSData(AYHCMParams.sharedInstance.sHexData, characterSetType: AYHCMParams.sharedInstance.sCharacterSet.rawValue);
+        let streamData:NSData? = sendData.stringByReplacingOccurrencesOfString("\n", withString: "\r\n").toNSData(AYHCMParams.sharedInstance.sHexData, characterSetType: AYHCMParams.sharedInstance.sCharacterSet.rawValue);
         if let data = streamData
         {
             if (AYHCMParams.sharedInstance.socketType == .kCMSTUDP)
@@ -215,6 +243,11 @@ class AYHClientManage: NSObject
         {
             self.tcpClientClosed();
             self.tcpClientSocket = nil;
+            if let _ = self.hbTimer
+            {
+                self.hbTimer!.invalidate();
+                self.hbTimer = nil
+            }
         }
     }
     

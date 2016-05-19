@@ -72,8 +72,8 @@ class VCParamsSetting: VCAYHBase
         let phoneSizeType:PhoneSizeType = AYHelper.currentDevicePhoneSizeType();
         if (phoneSizeType == .kPST_3_5)
         {
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handlerKeyboardWillShowNotification:"), name: UIKeyboardWillShowNotification, object: nil);
-            NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handlerKeyboardWillHideNotification:"), name: UIKeyboardWillHideNotification, object: nil);
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCParamsSetting.handlerKeyboardWillShowNotification), name: UIKeyboardWillShowNotification, object: nil);
+            NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCParamsSetting.handlerKeyboardWillHideNotification), name: UIKeyboardWillHideNotification, object: nil);
         }
     }
     
@@ -242,12 +242,12 @@ class VCParamsSetting: VCAYHBase
             let segmentedControl:UISegmentedControl = UISegmentedControl(items: ["UDP", "TCP"]);
             segmentedControl.frame = CGRectMake(0.0, 0.0, 150.0, 30.0);
             segmentedControl.tag = self.kViewTag;
-            segmentedControl.addTarget(self, action: Selector("segmentedControlValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            segmentedControl.addTarget(self, action: #selector(VCParamsSetting.segmentedControlValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             segmentedControl.selectedSegmentIndex = AYHCMParams.sharedInstance.socketType.rawValue;
             return segmentedControl;
         }();
         self.navigationItem.rightBarButtonItem = {
-            let okItem:UIBarButtonItem = UIBarButtonItem(title: NSLocalizedString("OK", comment: ""), style: UIBarButtonItemStyle.Done, target: self, action: Selector("barButtonItemClicked:"));
+            let okItem:UIBarButtonItem = UIBarButtonItem(title: NSLocalizedString("OK", comment: ""), style: UIBarButtonItemStyle.Done, target: self, action: #selector(VCParamsSetting.barButtonItemClicked(_:)));
             return okItem;
         }();
         
@@ -279,11 +279,11 @@ class VCParamsSetting: VCAYHBase
             self.scSCharacterSet = UISegmentedControl(items: ["GBK", "UTF-8"]);
             self.scSCharacterSet?.frame = CGRectMake(self.view.frame.size.width - 175.0, self.cellRowHeight / 2.0 - 15.0, 115.0, 30.0);
             self.scSCharacterSet?.tag = self.kViewTag + 1;
-            self.scSCharacterSet?.addTarget(self, action: Selector("segmentedControlValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            self.scSCharacterSet?.addTarget(self, action: #selector(VCParamsSetting.segmentedControlValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             
             self.swSHexData = UISwitch(frame: CGRectMake(self.view.frame.size.width - 55.0, self.cellRowHeight / 2.0 - 15.0, 30.0, 30.0));
             self.swSHexData?.tag = self.kViewTag + 3;
-            self.swSHexData?.addTarget(self, action: Selector("switchValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            self.swSHexData?.addTarget(self, action: #selector(VCParamsSetting.switchValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             return;
         }
     }
@@ -309,11 +309,11 @@ class VCParamsSetting: VCAYHBase
             self.scRCharacterSet = UISegmentedControl(items: ["GBK", "UTF-8"]);
             self.scRCharacterSet?.frame = CGRectMake(self.view.frame.size.width - 175.0, self.cellRowHeight / 2.0 - 15.0, 115.0, 30.0);
             self.scRCharacterSet?.tag = self.kViewTag + 2;
-            self.scRCharacterSet?.addTarget(self, action: Selector("segmentedControlValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            self.scRCharacterSet?.addTarget(self, action: #selector(VCParamsSetting.segmentedControlValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             
             self.swRHexData = UISwitch(frame: CGRectMake(self.view.frame.size.width - 55.0, self.cellRowHeight / 2.0 - 15.0, 30.0, 30.0));
             self.swRHexData?.tag = self.kViewTag + 4;
-            self.swRHexData?.addTarget(self, action: Selector("switchValueChanged:"), forControlEvents: UIControlEvents.ValueChanged);
+            self.swRHexData?.addTarget(self, action: #selector(VCParamsSetting.switchValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             return;
         }
     }
@@ -346,7 +346,7 @@ class VCParamsSetting: VCAYHBase
             self.tfLocalPort?.textAlignment = NSTextAlignment.Right;
             self.tfLocalPort?.tag = self.kViewTag + 5;
             self.tfLocalPort?.delegate = self;
-            self.tfLocalPort?.addTarget(self, action: Selector("textFieldEditingValueChanged:"), forControlEvents: UIControlEvents.EditingChanged);
+            self.tfLocalPort?.addTarget(self, action: #selector(VCParamsSetting.textFieldEditingValueChanged(_:)), forControlEvents: UIControlEvents.EditingChanged);
             cell.contentView.addSubview(self.tfLocalPort!);
             return;
         }
@@ -373,7 +373,7 @@ class VCParamsSetting: VCAYHBase
             self.tfRemoteIP?.textAlignment = NSTextAlignment.Right;
             self.tfRemoteIP?.tag = self.kViewTag + 6;
             self.tfRemoteIP?.delegate = self;
-            self.tfRemoteIP?.addTarget(self, action: Selector("textFieldEditingValueChanged:"), forControlEvents: UIControlEvents.EditingChanged);
+            self.tfRemoteIP?.addTarget(self, action: #selector(VCParamsSetting.textFieldEditingValueChanged(_:)), forControlEvents: UIControlEvents.EditingChanged);
             cell.contentView.addSubview(self.tfRemoteIP!);
             return;
         }
@@ -407,7 +407,7 @@ class VCParamsSetting: VCAYHBase
             self.tfRemotePort?.textAlignment = NSTextAlignment.Right;
             self.tfRemotePort?.tag = self.kViewTag + 7;
             self.tfRemotePort?.delegate = self;
-            self.tfRemotePort?.addTarget(self, action: Selector("textFieldEditingValueChanged:"), forControlEvents: UIControlEvents.EditingChanged);
+            self.tfRemotePort?.addTarget(self, action: #selector(VCParamsSetting.textFieldEditingValueChanged(_:)), forControlEvents: UIControlEvents.EditingChanged);
             cell.contentView.addSubview(self.tfRemotePort!);
             return;
         }

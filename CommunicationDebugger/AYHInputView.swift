@@ -105,7 +105,7 @@ class AYHInputView: UIView
         self.btnSend?.setTitleColor(UIColor(red: 142.0 / 255.0, green: 142.0 / 255.0, blue: 142.0 / 255.0, alpha: 1.0), forState: UIControlState.Disabled);
         self.btnSend?.setTitleColor(UIColor(red: 0.0, green: 204.0 / 255.0, blue: 71.0 / 255.0, alpha: 1.0), forState: UIControlState.Normal);
         self.btnSend?.setTitleColor(UIColor(red: 206.0 / 255.0, green: 237.0 / 255.0, blue: 203.0 / 255.0, alpha: 1.0   ), forState: UIControlState.Highlighted);
-        self.btnSend?.addTarget(self, action: Selector("buttonClicked:"), forControlEvents: UIControlEvents.TouchUpInside);
+        self.btnSend?.addTarget(self, action: #selector(AYHInputView.buttonClicked), forControlEvents: UIControlEvents.TouchUpInside);
         self.addSubview(self.btnSend!);
     }
     

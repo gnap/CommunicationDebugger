@@ -38,14 +38,14 @@ class VCMainRoot: VCAYHBase {
         AYHMessageManage.sharedInstance.delegate = self;
         self.initViews();
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("hanlderEnterBackgroundNotification:"), name: UIApplicationDidEnterBackgroundNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handlerEnterForegroundNotification:"), name: UIApplicationWillEnterForegroundNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCMainRoot.hanlderEnterBackgroundNotification(_:)), name: UIApplicationDidEnterBackgroundNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCMainRoot.handlerEnterForegroundNotification(_:)), name: UIApplicationWillEnterForegroundNotification, object: nil);
     }
 
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handlerKeyboardWillShowNotification:"), name: UIKeyboardWillShowNotification, object: nil);
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("handlerKeyboardWillHideNotification:"), name: UIKeyboardWillHideNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCMainRoot.handlerKeyboardWillShowNotification(_:)), name: UIKeyboardWillShowNotification, object: nil);
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCMainRoot.handlerKeyboardWillHideNotification(_:)), name: UIKeyboardWillHideNotification, object: nil);
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -80,7 +80,7 @@ class VCMainRoot: VCAYHBase {
         AYHDBHelper.sharedInstance.loadMessages(AYHCMParams.sharedInstance.serviceType, socketType: AYHCMParams.sharedInstance.socketType, offSet: self.dayPages, completion: { [weak self] (success:Bool) -> Void in
             if (success)
             {
-                self?.dayPages++;
+                self?.dayPages += 1;
             }
             refreshControl.endRefreshing();
             self?.messageTableView?.reloadData();
@@ -156,7 +156,7 @@ class VCMainRoot: VCAYHBase {
     {
         self.title = AYHelper.getIPAddress();
         
-        let popItems:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: Selector("handlerBarButtonItemClicked:"));
+        let popItems:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(VCMainRoot.handlerBarButtonItemClicked(_:)));
         popItems.tag = self.kViewTag + 2;
         self.navigationItem.rightBarButtonItem = popItems;
         
@@ -169,7 +169,7 @@ class VCMainRoot: VCAYHBase {
         
         self.refreshHeader = UIRefreshControl();
         self.refreshHeader?.tintColor = UIColor.blueColor();
-        self.refreshHeader?.addTarget(self, action: Selector("handlerTableViewPullRefresh:"), forControlEvents: UIControlEvents.ValueChanged);
+        self.refreshHeader?.addTarget(self, action: #selector(VCMainRoot.handlerTableViewPullRefresh(_:)), forControlEvents: UIControlEvents.ValueChanged);
         self.messageTableView?.addSubview(self.refreshHeader!);
         
         self.keyboardInputView = AYHInputView(frame: CGRectMake(0.0, self.view.frame.size.height - 114.0, self.view.frame.size.width, 50.0));
@@ -181,7 +181,7 @@ class VCMainRoot: VCAYHBase {
     {
         guard let _ = self.navigationItem.leftBarButtonItem else
         {
-            let refreshItem:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: Selector("handlerBarButtonItemClicked:"));
+            let refreshItem:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: #selector(VCMainRoot.handlerBarButtonItemClicked(_:)));
             refreshItem.tag = self.kViewTag + 3;
             self.navigationItem.leftBarButtonItem = refreshItem;
             return;
@@ -232,7 +232,7 @@ class VCMainRoot: VCAYHBase {
                 self?.startSocket();
                 if (success)
                 {
-                    self?.dayPages++;
+                    self?.dayPages += 1;
                 }
             });
         });
@@ -566,6 +566,7 @@ extension VCMainRoot : AYHClientManageDelegate
         self.view.hideLoadAlert();
         
         self.initRefreshBarButtonItem();
+        self.startSocket();
     }
     
     func tcpClientManage(clientManage: AYHClientManage, receivedThenSaveSuccess success: Bool) {

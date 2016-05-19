@@ -325,7 +325,7 @@
 				TargetAttributes = {
 					18B5A70D1B9688A20085F867 = {
 						CreatedOnToolsVersion = 7.0;
-						DevelopmentTeam = CFLA62C2F3;
+						DevelopmentTeam = WNNK7EH57R;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 0;
@@ -534,7 +534,7 @@
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = CommunicationDebugger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alimysoyang.CommunicationDebugger;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yeedrop.CommunicationDebugger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -551,7 +551,7 @@
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = CommunicationDebugger/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.alimysoyang.CommunicationDebugger;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yeedrop.CommunicationDebugger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
