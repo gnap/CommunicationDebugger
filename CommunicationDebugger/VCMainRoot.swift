@@ -71,7 +71,21 @@ class VCMainRoot: VCAYHBase {
     
     internal override func reachabilityStatusChanged(notification: NSNotification) {
         super.reachabilityStatusChanged(notification);
-        self.title = AYHelper.getIPAddress();
+        if (AYHCMParams.sharedInstance.serviceType == .kCMSTServer)
+        {
+            if let _ = self.serverManage
+            {
+                self.title = AYHelper.getIPAddress();
+            }
+        }
+        else
+        {
+            if let _ = self.clientManage
+            {
+                self.title = self.clientManage?.getLocalHost();
+            }
+        }
+        
     }
     
     // MARK: - event response
@@ -90,13 +104,13 @@ class VCMainRoot: VCAYHBase {
     internal func hanlderEnterBackgroundNotification(notification:NSNotification)
     {
         self.view.hideLoadAlert();
-        self.closedSocket();
+        //self.closedSocket();
     }
     
     internal func handlerEnterForegroundNotification(notification:NSNotification)
     {
-        self.closedSocket();
-        self.startSocket();
+        // self.closedSocket();
+        // self.startSocket();
     }
     
     internal func handlerKeyboardWillShowNotification(notification:NSNotification)
@@ -154,7 +168,7 @@ class VCMainRoot: VCAYHBase {
     // MARK: - private methods
     private func initViews()
     {
-        self.title = AYHelper.getIPAddress();
+        self.title = "Not Connected";
         
         let popItems:UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Add, target: self, action: #selector(VCMainRoot.handlerBarButtonItemClicked(_:)));
         popItems.tag = self.kViewTag + 2;
@@ -265,6 +279,13 @@ class VCMainRoot: VCAYHBase {
             self.clientManage = AYHClientManage(delegate: self);
             self.clientManage?.clientConnecting();
         }
+    }
+    
+    func sendHeartBeat(timer: NSTimer)
+    {
+        
+        self.clientManage?.clientSendData("GET / HTTP/1.1\nHost: api.zhihu.com\n\n")
+        
     }
     
     private func closedSocket()
@@ -560,6 +581,7 @@ extension VCMainRoot : AYHClientManageDelegate
         {
             self.navigationItem.leftBarButtonItem = nil;
         }
+        self.title = clientManage.getLocalHost();
     }
     
     func tcpClientManage(clientManage: AYHClientManage, didDisConnected error: String) {

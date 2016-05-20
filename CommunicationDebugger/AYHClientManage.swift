@@ -20,6 +20,7 @@ import Foundation
     func tcpClientManage(clientManage:AYHClientManage, receivedThenSaveSuccess success:Bool);
     
     func clientManage(clientManage:AYHClientManage, sendedThenSaveSuccess success:Bool);
+    func sendHeartBeat(time: NSTimer);
     
     
 }
@@ -62,13 +63,14 @@ class AYHClientManage: NSObject
     
     deinit
     {
-        self.clientClosedThenNil();
-        self.delegate = nil;
         if let _ = self.hbTimer
         {
             self.hbTimer!.invalidate();
             self.hbTimer = nil
         }
+        self.clientClosedThenNil();
+        self.delegate = nil;
+
     }
 
     // MARK: - public methods
@@ -80,39 +82,51 @@ class AYHClientManage: NSObject
         }
         else
         {
+            
+            if let _ = self.hbTimer
+            {
+                self.hbTimer!.invalidate()
+                self.hbTimer = nil;
+            }
             self.tcpClientConnecting();
-        }
-        if let _ = self.hbTimer
-        {
-            self.hbTimer!.invalidate()
-            self.hbTimer = nil;
-        }
-        self.hbTimer = NSTimer.scheduledTimerWithTimeInterval(6,
-                                                              target: self,
-                                                              selector: #selector(AYHClientManage.sendHeartBeat),
+            self.hbTimer = NSTimer.scheduledTimerWithTimeInterval(10,
+                                                              target: self.delegate!,
+                                                              selector: #selector(AYHClientManageDelegate.sendHeartBeat),
                                                               userInfo: nil,
                                                               repeats: true)
+        }
     }
     
-    func sendHeartBeat(timer: NSTimer)
-    {
-        clientSendData("GET / HTTP/1.1\nHost: api.zhihu.com\n\n")
-    }
+
     
     func clientClosed()
     {
+    
         if (AYHCMParams.sharedInstance.socketType == .kCMSTUDP)
         {
             self.udpClientClosed();
         }
         else
         {
+            if let _ = self.hbTimer
+            {
+                self.hbTimer!.invalidate()
+                self.hbTimer = nil;
+            }
             self.tcpClientClosed();
         }
-        if let _ = self.hbTimer
+
+    }
+    
+    func getLocalHost() -> String
+    {
+       if (AYHCMParams.sharedInstance.socketType == .kCMSTUDP)
+       {
+          return (self.udpClientSocket?.localHost())!;
+        }
+        else
         {
-            self.hbTimer!.invalidate()
-            self.hbTimer = nil;
+        return (self.tcpClientSocket?.localHost)!;
         }
     }
     
@@ -241,13 +255,14 @@ class AYHClientManage: NSObject
         }
         else
         {
-            self.tcpClientClosed();
-            self.tcpClientSocket = nil;
             if let _ = self.hbTimer
             {
                 self.hbTimer!.invalidate();
                 self.hbTimer = nil
             }
+            self.tcpClientClosed();
+            self.tcpClientSocket = nil;
+
         }
     }
     
