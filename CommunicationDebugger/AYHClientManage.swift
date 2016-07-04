@@ -89,7 +89,7 @@ class AYHClientManage: NSObject
                 self.hbTimer = nil;
             }
             self.tcpClientConnecting();
-            self.hbTimer = NSTimer.scheduledTimerWithTimeInterval(10,
+            self.hbTimer = NSTimer.scheduledTimerWithTimeInterval(6,
                                                               target: self.delegate!,
                                                               selector: #selector(AYHClientManageDelegate.sendHeartBeat),
                                                               userInfo: nil,
@@ -97,6 +97,11 @@ class AYHClientManage: NSObject
         }
     }
     
+    func reachabilityUpdate(info: String)
+    {
+       
+            self.notificationToNewMessage(AYHCMParams.sharedInstance.socketType, notificationType: .kCMSMTNotification, notificationInfo: info);
+    }
 
     
     func clientClosed()
@@ -128,6 +133,11 @@ class AYHClientManage: NSObject
         {
         return (self.tcpClientSocket?.localHost)!;
         }
+    }
+    
+    func reportCWND()
+    {
+        self.notificationToNewMessage(AYHCMParams.sharedInstance.socketType, notificationType: .kCMSMTNotification, notificationInfo: "CWND: " + String(self.tcpClientSocket?.getSNDCWND()));
     }
     
     func clientSendData(sendData:String)
@@ -229,6 +239,8 @@ class AYHClientManage: NSObject
             
         }
     }
+    
+    
     
     private func udpClientClosed()
     {

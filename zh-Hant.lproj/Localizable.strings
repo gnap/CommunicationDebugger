@@ -65,6 +65,7 @@ UnkownIP = "未知IP";
 
 ClearCache = "清理緩存";
 SaveLogs = "保存通訊數據";
+HeartBeat = "发送心跳包";
 Version = "版本號";
 Email = "Email";
 About = "關於";

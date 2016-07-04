@@ -15,6 +15,7 @@ class AYHParams: NSObject, NSCoding
 {
     // MARK: - properties
     var isSaveLogs = false;
+    var isHeartBeat = true;
     
     static let sharedInstance:AYHParams =
     {
@@ -51,6 +52,7 @@ class AYHParams: NSObject, NSCoding
         {
             let tmp:AYHParams = NSKeyedUnarchiver.unarchiveObjectWithFile(configFilePath) as! AYHParams;
             self.isSaveLogs = tmp.isSaveLogs;
+            self.isHeartBeat = tmp.isHeartBeat;
         }
     }
 	
@@ -64,11 +66,13 @@ class AYHParams: NSObject, NSCoding
         super.init();
         
         self.isSaveLogs = aDecoder.decodeBoolForKey("isSaveLogs");
+        self.isHeartBeat = aDecoder.decodeBoolForKey("isHeartBeat");
     }
     
     func encodeWithCoder(aCoder: NSCoder)
     {
         aCoder.encodeBool(self.isSaveLogs, forKey: "isSaveLogs");
+        aCoder.encodeBool(self.isHeartBeat, forKey: "isHeartBeat");
     }
     
     func toSave()

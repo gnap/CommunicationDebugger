@@ -28,12 +28,18 @@ class VCMainRoot: VCAYHBase {
     // MARK: - life cycle ViewController生命周期
     deinit
     {
+        SSASwiftReachability.sharedManager?.stopMonitoring();
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: SSAReachabilityDidChangeNotification, object: nil);
         AYHMessageManage.sharedInstance.delegate = nil;
         NSNotificationCenter.defaultCenter().removeObserver(self);
     }
     
     override func viewDidLoad() {
         super.viewDidLoad();
+        
+        SSASwiftReachability.sharedManager?.startMonitoring();
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCMainRoot.reachabilityStatusChanged(_:)), name: SSAReachabilityDidChangeNotification, object: nil);
+        
         self.isDidLoad = true;
         AYHMessageManage.sharedInstance.delegate = self;
         self.initViews();
@@ -69,8 +75,7 @@ class VCMainRoot: VCAYHBase {
         // Dispose of any resources that can be recreated.
     }
     
-    internal override func reachabilityStatusChanged(notification: NSNotification) {
-        super.reachabilityStatusChanged(notification);
+    internal func reachabilityStatusChanged(notification: NSNotification) {
         if (AYHCMParams.sharedInstance.serviceType == .kCMSTServer)
         {
             if let _ = self.serverManage
@@ -82,8 +87,16 @@ class VCMainRoot: VCAYHBase {
         {
             if let _ = self.clientManage
             {
-                self.title = self.clientManage?.getLocalHost();
+                self.clientManage?.reachabilityUpdate("" + SSASwiftReachability.sharedManager!.networkReachabilityStatus.description)
+                 if (SSASwiftReachability.sharedManager!.isReachable())
+                 {
+                     self.startSocket();
+                 }
             }
+//            if let _ = self.clientManage
+//            {
+//                self.title = self.clientManage?.getLocalHost();
+//            }
         }
         
     }
@@ -109,7 +122,6 @@ class VCMainRoot: VCAYHBase {
     
     internal func handlerEnterForegroundNotification(notification:NSNotification)
     {
-        // self.closedSocket();
         // self.startSocket();
     }
     
@@ -283,9 +295,13 @@ class VCMainRoot: VCAYHBase {
     
     func sendHeartBeat(timer: NSTimer)
     {
-        
-        self.clientManage?.clientSendData("GET / HTTP/1.1\nHost: api.zhihu.com\n\n")
-        
+
+        if (AYHParams.sharedInstance.isHeartBeat)
+        {
+             self.clientManage?.clientSendData("GET / HTTP/1.1\nHost: api.zhihu.com\n\n")
+        }
+        self.clientManage?.reportCWND();
+      
     }
     
     private func closedSocket()
@@ -317,6 +333,8 @@ class VCMainRoot: VCAYHBase {
             self.messageTableView?.scrollToRowAtIndexPath(indexPath, atScrollPosition: UITableViewScrollPosition.Bottom, animated: true);
         }
     }
+    
+  
 }
 
 // MARK: - UITableView DataSource
@@ -588,7 +606,11 @@ extension VCMainRoot : AYHClientManageDelegate
         self.view.hideLoadAlert();
         
         self.initRefreshBarButtonItem();
-        self.startSocket();
+        if (SSASwiftReachability.sharedManager!.isReachable())
+        {
+            self.startSocket();
+        }
+
     }
     
     func tcpClientManage(clientManage: AYHClientManage, receivedThenSaveSuccess success: Bool) {

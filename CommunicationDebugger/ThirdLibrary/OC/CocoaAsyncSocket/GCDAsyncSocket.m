@@ -21,6 +21,7 @@
 #import <ifaddrs.h>
 #import <netdb.h>
 #import <netinet/in.h>
+#import <netinet/tcp.h>
 #import <net/if.h>
 #import <sys/socket.h>
 #import <sys/types.h>
@@ -2006,6 +2007,18 @@ enum GCDAsyncSocketConfig
 	return [self connectToAddress:remoteAddr viaInterface:nil withTimeout:timeout error:errPtr];
 }
 
+- (int)getSNDCWND
+{
+    struct tcp_connection_info info;
+    int iOptLen = sizeof(struct tcp_connection_info);
+
+    if (getsockopt(socket4FD, IPPROTO_TCP, TCP_CONNECTION_INFO, (char*)&info, (socklen_t *)&iOptLen) == 0) {
+        return info.tcpi_snd_cwnd;
+    }
+    return 0;
+   
+}
+
 - (BOOL)connectToAddress:(NSData *)inRemoteAddr
             viaInterface:(NSString *)inInterface
              withTimeout:(NSTimeInterval)timeout
@@ -2265,6 +2278,18 @@ enum GCDAsyncSocketConfig
 	
 	int nosigpipe = 1;
 	setsockopt(socketFD, SOL_SOCKET, SO_NOSIGPIPE, &nosigpipe, sizeof(nosigpipe));
+    
+    int on = 1;
+    int delay = 6;
+    int keepaliveCount = 2;
+    int keepaliveIntvl = 2;
+    int retransmissionTimeout = 10;
+    
+    setsockopt(socketFD, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+    setsockopt(socketFD, IPPROTO_TCP, TCP_KEEPALIVE, &delay, sizeof(delay));
+    setsockopt(socketFD, IPPROTO_TCP, TCP_KEEPCNT, &keepaliveCount, sizeof(int));
+    setsockopt(socketFD, IPPROTO_TCP, TCP_KEEPINTVL, &keepaliveIntvl, sizeof(int));
+    setsockopt(socketFD, IPPROTO_TCP, TCP_RXT_CONNDROPTIME, &retransmissionTimeout, sizeof(int));
 	
 	// Start the connection process in a background queue
 	

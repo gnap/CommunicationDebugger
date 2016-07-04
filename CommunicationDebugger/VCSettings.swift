@@ -21,12 +21,13 @@ class VCSettings: VCAYHBase
     // MARK: - property 属性
     weak var delegate:VCSettingsDelegate?;
     private let appstorepath:String = "itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=682270868";
-    private let group0Titles:[String] = [NSLocalizedString("ClearCache", comment: ""), NSLocalizedString("SaveLogs", comment: "")];
+    private let group0Titles:[String] = [NSLocalizedString("ClearCache", comment: ""), NSLocalizedString("SaveLogs", comment: ""), NSLocalizedString("ToggleHeartBeat", comment: "")];
     private let group1Titles:[String] = [NSLocalizedString("Version", comment: ""), NSLocalizedString("Email", comment: ""), NSLocalizedString("About", comment: "")];
     private let group2Titles:[String] = [NSLocalizedString("OpenSource", comment: "")];
     
     private var settingsTableView:UITableView?;
     private var swSaveLogs:UISwitch?;
+    private var swHeartBeat:UISwitch?;
     
     // MARK: - life cycle ViewController生命周期
     override func viewDidLoad() {
@@ -43,9 +44,14 @@ class VCSettings: VCAYHBase
     }
     
     // MARK: - event response
-    internal func switchValueChanged(sender:UISwitch)
+    internal func switchSaveLogsChanged(sender:UISwitch)
     {
         AYHParams.sharedInstance.isSaveLogs = sender.on;
+        AYHParams.sharedInstance.toSave();
+    }
+    internal func switchHeartBeatChanged(sender:UISwitch)
+    {
+        AYHParams.sharedInstance.isHeartBeat = sender.on;
         AYHParams.sharedInstance.toSave();
     }
     
@@ -78,10 +84,32 @@ class VCSettings: VCAYHBase
         {
             self.swSaveLogs = UISwitch(frame: CGRectMake(self.view.frame.size.width - 55.0, 6.0, 30.0, 30.0));
             self.swSaveLogs?.on = AYHParams.sharedInstance.isSaveLogs;
-            self.swSaveLogs?.addTarget(self, action: #selector(VCSettings.switchValueChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
+            self.swSaveLogs?.addTarget(self, action: #selector(VCSettings.switchSaveLogsChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
             return;
         }
     }
+    
+    private func buildCellHeartBeat(parentCell:UITableViewCell?)
+    {
+        guard let cell = parentCell else
+        {
+            return;
+        }
+        
+        defer
+        {
+            cell.contentView.addSubview(self.swHeartBeat!);
+        }
+        
+        guard let _ = self.swHeartBeat else
+        {
+            self.swHeartBeat = UISwitch(frame: CGRectMake(self.view.frame.size.width - 55.0, 6.0, 30.0, 30.0));
+            self.swHeartBeat?.on = AYHParams.sharedInstance.isHeartBeat;
+            self.swHeartBeat?.addTarget(self, action: #selector(VCSettings.switchHeartBeatChanged(_:)), forControlEvents: UIControlEvents.ValueChanged);
+            return;
+        }
+    }
+
     
     private func removeFile(filePath:String)
     {
@@ -176,6 +204,11 @@ extension VCSettings : UITableViewDataSource
             {
                 cell?.selectionStyle = UITableViewCellSelectionStyle.None;
                 self.buildCellSaveLogs(cell);
+            } else if (indexPath.row == 2)
+            {
+                cell?.selectionStyle = UITableViewCellSelectionStyle.None;
+                self.buildCellHeartBeat(cell);
+
             }
         }
         else if (indexPath.section == 1)

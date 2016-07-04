@@ -66,7 +66,7 @@ public class SSASwiftReachability {
     
     var networkReachabilityStatus: ReachabilityStatus = .Unknown
     var reachabilityAssociation: ReachabilityAssociation = .ForName
-    var reachabilityInformationMode: ReachabilityInformationMode = .Simple
+    var reachabilityInformationMode: ReachabilityInformationMode = .Advanced
     
     var currentReachabilityString: String {
         return networkReachabilityStatus.description
@@ -109,7 +109,8 @@ public class SSASwiftReachability {
         return SSASwiftReachability(reachabilityRef: reachabilityRef!, reachabilityAssociation: .ForName)
     }
     
-    class func managerForAddress(var address: sockaddr_in) -> SSASwiftReachability? {
+    class func managerForAddress(address: sockaddr_in) -> SSASwiftReachability? {
+        var address = address;
         let reachabilityRef = withUnsafePointer(&address) {
             SCNetworkReachabilityCreateWithAddress(nil, UnsafePointer($0))
         }

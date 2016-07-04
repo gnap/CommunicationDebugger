@@ -28,6 +28,7 @@ SendedDataValideAddress = "Invalid address";
 SendedDataError = "Data error";
 DeleteMessage = "Are you sure you want to delete all of the communication data?";
 Cleanup = "Cleanup complete";
+NetworkConnected = "Network is connected";
 NetworkDisconnected = "Network is disconnected";
 
 RemoteIPAndPort = "Remote IP & Port:%@";
@@ -65,6 +66,7 @@ UnkownIP = "unkown ip address";
 
 ClearCache = "Clear cache";
 SaveLogs = "Save logs";
+HeartBeat = "Heart Beat";
 Version = "Version";
 Email = "Email";
 About = "About";

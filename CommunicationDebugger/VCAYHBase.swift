@@ -23,8 +23,7 @@ class VCAYHBase: UIViewController
         self.view.backgroundColor = AYHelper.defaultBackgroundColor;
         self.edgesForExtendedLayout = UIRectEdge.None;
         
-        SSASwiftReachability.sharedManager?.startMonitoring();
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VCAYHBase.reachabilityStatusChanged(_:)), name: SSAReachabilityDidChangeNotification, object: nil);
+     
     }
 
     override func viewDidAppear(animated: Bool) {
@@ -37,19 +36,11 @@ class VCAYHBase: UIViewController
     
     deinit
     {
-        SSASwiftReachability.sharedManager?.stopMonitoring();
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: SSAReachabilityDidChangeNotification, object: nil);
+        
     }
     
     // MARK: - event response
-    internal func reachabilityStatusChanged(notification:NSNotification)
-    {
-        if (!SSASwiftReachability.sharedManager!.isReachable())
-        {
-            self.view.alert(NSLocalizedString("NetworkDisconnected", comment: ""), alertType: UIView.AlertViewType.kAVTFailed);
-        }
-    }
-    
+        
     // MARK: - public methods
     
     // MARK: - private methods

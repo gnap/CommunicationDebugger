@@ -303,6 +303,8 @@ typedef enum GCDAsyncSocketError GCDAsyncSocketError;
 **/
 - (void)disconnect;
 
+- (int)getSNDCWND;
+
 /**
  * Disconnects after all pending reads have completed.
  * After calling this, the read and write methods will do nothing.
